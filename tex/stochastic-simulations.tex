@@ -1,0 +1,105 @@
+\documentclass[../portafolio.tex]{subfiles}
+
+% Solo agregue paquetes en el preámbulo de ../portafolio.tex
+
+\begin{document}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{
+Stochastic Simulations.}   % ejemplo: Derivadas numéricas , introducción a git , 
+
+%\hfill \textbf{Fecha de la actividad:} 19 de agosto de 2022
+
+\medskip
+
+%-------------------------------------------------------------%---------------------------------------------------------------------------------
+% Activity Overview
+
+This activity explored the numerical estimation of the mathematical constant $\pi$ using a Monte Carlo simulation. The method is based on a geometric relationship between the area of a circle and the area of the square in which it is inscribed.
+
+The objectives were to derive the analytical relationship used to estimate $\pi$, implement a random sampling algorithm in Python, and investigate how probabilistic methods can be used to approximate mathematical quantities.
+
+%---------------------------------------------------------------------------------
+% Evidence
+%---------------------------------------------------------------------------------
+
+\subsection{Monte Carlo Estimation of \texorpdfstring{$\pi$}{π}}
+
+Consider a circle of radius $r=\frac{1}{2}$ inscribed in a square of side length 1. The areas of the two geometric figures are
+\begin{align*}
+A_{\text{circle}} = \pi r^2 = \frac{\pi}{4},
+\end{align*}
+and
+\begin{align*}
+A_{\text{square}} = 1.
+\end{align*}
+Therefore,
+\begin{align*}
+\pi = 4 \frac{A_{\text{circle}}}{A_{\text{square}}}.
+\end{align*}
+This relationship forms the basis of the Monte Carlo approach. If points are distributed uniformly at random within the square, the fraction of points that fall inside the circle approximates the ratio between the two areas.
+
+\subsection{Implementation}
+
+A function was first created to generate random points inside the square. Each point was then classified according to whether it lay inside or outside the inscribed circle. A point belongs to the circle if
+\begin{align*}
+x^2+y^2 < r^2.
+\end{align*}
+The Monte Carlo estimator for $\pi$ is then given by
+\begin{align*}
+\pi \approx 4 \frac{N_{\text{inside}}}{N_{\text{total}}},
+\end{align*}
+where $N_{\text{inside}}$ denotes the number of points inside the circle and $N_{\text{total}}$ is the total number of generated points. The complete implementation is shown in Code~\ref{cod:pi}.
+
+\begin{listing}
+\begin{pythoncode}
+import numpy as np
+
+N_total = 100000
+
+# Generating uniform random coordinates within the square bounds [-0.5, 0.5]
+x = np.random.uniform(-0.5, 0.5, N_total)
+y = np.random.uniform(-0.5, 0.5, N_total)
+
+# Distance condition to check if points fall inside the circle (r = 0.5)
+inside_circle = (x**2 + y**2) < 0.25
+
+N_inside = np.sum(inside_circle)
+
+# Monte Carlo Pi approximation
+pi_estimate = 4 * N_inside / N_total
+print(f"Estimated Pi value: {pi_estimate}")
+\end{pythoncode}
+\caption{Monte Carlo estimation of $\pi$.}
+\label{cod:pi}
+\end{listing}
+
+The simulation was performed using $100,000$ randomly generated points. In addition to estimating $\pi$, the algorithm stored the coordinates of points inside and outside the circle to visualize the sampling process.
+
+\subsection{Results}
+
+Figure~\ref{fig:lg} shows the distribution of sampled points within the square. Points falling inside the circle are displayed separately from those outside the circle, providing a visual confirmation of the classification procedure.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=\textwidth]{pi.png}
+\caption{Monte Carlo estimation of $\pi$ using random sampling within a square containing an inscribed circle.}
+\label{fig:lg}
+\end{figure}
+
+As the number of sampled points increases, the estimated value converges toward the true value of $\pi$. This behavior is a direct consequence of the Law of Large Numbers, which guarantees that the empirical area ratio approaches the theoretical ratio as the sample size grows.
+
+\subsection{Discussion}
+
+This activity provided an introduction to Monte Carlo methods, a class of computational techniques that use randomness to solve mathematical and physical problems.
+
+Although estimating $\pi$ is a simple example, the same principles are widely applied in computational physics, quantitative finance, statistical inference, machine learning, uncertainty quantification, and large-scale simulations where deterministic solutions may be impractical or unavailable.
+
+The exercise demonstrates how random sampling can be used to approximate geometric quantities and highlights the power of probabilistic algorithms in scientific computing.
+
+
+
+
+\end{document}

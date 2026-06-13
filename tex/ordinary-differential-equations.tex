@@ -1,0 +1,175 @@
+\documentclass[../portafolio.tex]{subfiles}
+
+% Solo agregue paquetes en el preámbulo de ../portafolio.tex
+
+\begin{document}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Ordinary Differential Equations}   % ejemplo: Derivadas numéricas , introducción a git , 
+
+%\hfill \textbf{Fecha de la actividad:} 23 de septiembre de 2022
+
+\medskip
+%---------------------------------------------------------------------------------
+% Activity Overview
+This activity focused on the numerical study of the Lotka--Volterra predator--prey model, a classical system of nonlinear differential equations widely used in population dynamics and complex systems research.
+
+The objectives were to derive a dimensionless form of the equations, implement a numerical solver based on the Euler--Cromer method, investigate the influence of different initial conditions on the system dynamics, and verify the conservation of an invariant quantity associated with the model.
+
+%---------------------------------------------------------------------------------
+% Evidence
+%---------------------------------------------------------------------------------
+
+\subsection{Dimensionless Form of the Lotka--Volterra Equations}
+
+The Lotka--Volterra predator--prey model is given by
+\begin{align}
+\frac{dP}{dt} &= \alpha P - \beta PD, \nonumber \\
+\frac{dD}{dt} &= -\gamma D + \delta PD,
+\label{eclv}
+\end{align}
+where $P$ and $D$ represent the prey and predator populations, respectively.
+
+The first part of the activity consisted of showing that the system can be rewritten in a dimensionless form through an appropriate change of variables. Introducing scaled variables $\Pi$, $\Delta$, and the dimensionless time $\tau$, the equations become
+\begin{align}
+\frac{d\Pi}{d\tau} = \Pi(1-\Delta),
+\label{ec1}
+\end{align}
+and
+\begin{align}
+\frac{d\Delta}{d\tau} = \mu\Delta(\Pi-1),
+\label{ec2}
+\end{align}
+where $\mu$ is a dimensionless parameter that characterizes the relative growth and decay rates of the interacting populations.
+
+This reformulation simplifies the mathematical structure of the model while preserving its dynamical behavior, making it more convenient for numerical analysis.
+
+\subsection{Numerical Solution Using the Euler--Cromer Method}
+
+The dimensionless system was solved numerically using the Euler--Cromer method. Time was discretized with a constant step size, and the population variables were updated iteratively according to the governing equations. The implementation is shown in Code~\ref{cod:edo1}.
+
+\begin{listing}
+\begin{pythoncode}
+import numpy as np
+
+t = np.arange(0, 40, 0.1)
+h = 0.1
+
+pi = np.zeros(len(t))
+delta = np.zeros(len(t))
+
+mu = 1
+pi[0] = 0.1
+delta[0] = 5.0
+
+for n in range(len(t) - 1):
+    pi[n+1] = pi[n] + h * pi[n] * (1 - delta[n])
+    delta[n+1] = delta[n] + h * mu * delta[n] * (pi[n+1] - 1)
+\end{pythoncode}
+\caption{Euler--Cromer solution of the Lotka--Volterra system.}
+\label{cod:edo1}
+\end{listing}
+
+Figure~\ref{fig:edo} shows the resulting population dynamics. The oscillatory behavior is characteristic of predator--prey systems: an increase in the prey population is followed by delayed predator growth, which subsequently reduces the prey population. As predator numbers decrease, prey populations recover, generating a repeating cycle.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.5\textwidth]{edofigure.png}
+\caption{Time evolution of predator and prey populations.}
+\label{fig:edo}
+\end{figure}
+
+\subsection{Phase-Space Analysis}
+
+The numerical experiment was repeated for multiple initial values of $\Delta(0)$ while keeping the remaining parameters fixed. The corresponding implementation is shown in Code~\ref{cod:edo2}.
+
+\begin{listing}
+\begin{pythoncode}
+import numpy as np
+import matplotlib.pyplot as plt
+
+mu = 1
+t = np.arange(0, 100, 0.1)
+h = 0.05
+pi = np.zeros(len(t))
+delta = np.zeros(len(t))
+
+for Delta0 in np.arange(1.1, 10, 1):
+    pi[0] = 1.0
+    delta[0] = Delta0
+    for n in range(len(t) - 1):
+        pi[n+1] = pi[n] + h * pi[n] * (1 - delta[n])
+        delta[n+1] = delta[n] + h * mu * delta[n] * (pi[n+1] - 1)
+    plt.plot(delta, pi)
+\end{pythoncode}
+\caption{Phase-space trajectories for different initial conditions.}
+\label{cod:edo2}
+\end{listing}
+
+The resulting trajectories are displayed in Figure~\ref{graph:phase_space}.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.5\textwidth]{graph-edo.png}
+\caption{Phase-space representation of the Lotka--Volterra dynamics.}
+\label{graph:phase_space}
+\end{figure}
+
+The phase-space trajectories form closed orbits around the equilibrium point, indicating periodic behavior and demonstrating the stability properties of the system. This representation provides a useful visualization of how predator and prey populations evolve relative to one another.
+
+\subsection{Verification of the Conserved Quantity}
+
+One of the most important properties of the Lotka--Volterra model is the existence of an invariant quantity,
+\begin{align}
+C = \ln \Delta - \Delta + \mu (\ln \Pi - \Pi),
+\label{eq:cte}
+\end{align}
+which remains constant along exact trajectories of the system.
+
+To verify the accuracy of the numerical solution, the quantity $C$ was evaluated throughout the simulation using the implementation shown in Code~\ref{cod:edo3}.
+
+\begin{listing}
+\begin{pythoncode}
+import numpy as np
+import matplotlib.pyplot as plt
+
+mu = 1
+t = np.arange(0, 1000, 0.1)
+h = 0.05
+pi = np.zeros(len(t))
+delta = np.zeros(len(t))
+
+for Delta0 in np.arange(1.1, 10, 1):
+    pi[0] = 0.3
+    delta[0] = Delta0
+    for n in range(len(t) - 1):
+        pi[n+1] = pi[n] + h * pi[n] * (1 - delta[n])
+        delta[n+1] = delta[n] + h * mu * delta[n] * (pi[n+1] - 1)
+    
+    C = np.log(delta) - delta + mu * (np.log(pi) - pi)
+    plt.plot(t, C)
+\end{pythoncode}
+\caption{Evaluation of the Lotka--Volterra invariant.}
+\label{cod:edo3}
+\end{listing}
+
+The resulting graph is presented in Figure~\ref{graph:c}.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.5\textwidth]{edofigure1.png}
+\caption{Numerical evaluation of the conserved quantity $C$.}
+\label{graph:c}
+\end{figure}
+
+The near-constant behavior of $C$ throughout the simulation indicates that the Euler--Cromer method reproduces the dynamics of the system with good numerical accuracy. Significant deviations from constancy would suggest the accumulation of numerical errors and a loss of fidelity in the computed trajectories.
+
+\subsection{Discussion}
+
+This activity provided practical experience in the numerical solution of nonlinear dynamical systems and demonstrated several important concepts in computational physics, including dimensionless analysis, numerical integration of differential equations, phase-space visualization, and conservation laws.
+
+The Lotka--Volterra model serves as a classical example of how relatively simple nonlinear equations can generate rich dynamical behavior. The numerical experiments performed here illustrate the usefulness of computational methods for studying systems that are difficult to analyze analytically and provide a foundation for more advanced work in complex systems, mathematical modeling, and population dynamics.
+
+
+\end{document}

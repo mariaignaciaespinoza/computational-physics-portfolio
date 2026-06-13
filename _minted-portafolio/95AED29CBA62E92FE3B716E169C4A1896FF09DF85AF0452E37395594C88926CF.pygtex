@@ -1,0 +1,11 @@
+\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8\relax}]
+\PYG{k}{class} \PYG{n+nc}{polyfit}\PYG{p}{(}\PYG{n}{PolyClass}\PYG{o}{.}\PYG{n}{Poly}\PYG{p}{):}
+    \PYG{k}{def} \PYG{n+nf+fm}{\PYGZus{}\PYGZus{}init\PYGZus{}\PYGZus{}}\PYG{p}{(}\PYG{n+nb+bp}{self}\PYG{p}{,} \PYG{n}{x}\PYG{p}{,} \PYG{n}{y}\PYG{p}{,} \PYG{n}{grado}\PYG{o}{=}\PYG{l+m+mi}{1}\PYG{p}{):}
+        \PYG{n}{G} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{vander}\PYG{p}{(}\PYG{n}{x}\PYG{p}{,} \PYG{n}{grado} \PYG{o}{+} \PYG{l+m+mi}{1}\PYG{p}{,} \PYG{n}{increasing}\PYG{o}{=}\PYG{k+kc}{True}\PYG{p}{)}
+
+        \PYG{n}{M} \PYG{o}{=} \PYG{n}{G}\PYG{o}{.}\PYG{n}{T} \PYG{o}{@} \PYG{n}{G}
+        \PYG{n}{z} \PYG{o}{=} \PYG{n}{G}\PYG{o}{.}\PYG{n}{T} \PYG{o}{@} \PYG{n}{y}
+
+        \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{coef} \PYG{o}{=} \PYG{n}{Resolver}\PYG{p}{(}\PYG{n}{M}\PYG{p}{,} \PYG{n}{z}\PYG{p}{)}
+        \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{chi2} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{sum}\PYG{p}{((}\PYG{n}{G} \PYG{o}{@} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{coef} \PYG{o}{\PYGZhy{}} \PYG{n}{y}\PYG{p}{)}\PYG{o}{**}\PYG{l+m+mi}{2}\PYG{p}{)}
+\end{Verbatim}

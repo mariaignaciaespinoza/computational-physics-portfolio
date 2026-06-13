@@ -1,0 +1,170 @@
+\documentclass[../portafolio.tex]{subfiles}
+
+% Solo agregue paquetes en el preámbulo de ../portafolio.tex
+
+\begin{document}
+
+
+\section{Numerical Differentiation}  
+
+%\hfill \textbf{Fecha de la actividad:} 19 de agosto de 2022
+
+\medskip
+
+%---------------------------------------------------------------------------------
+% Activity Overview
+
+In this activity, numerical methods for approximating derivatives were explored using Python. Several finite-difference schemes were studied, including forward, backward, and centered difference approximations. These methods provide practical tools for estimating derivatives when analytical expressions are unavailable or when working with discrete datasets.
+
+%---------------------------------------------------------------------------------
+% Work Modality
+
+This activity was completed individually during laboratory sessions.
+
+%---------------------------------------------------------------------------------
+% Evidence
+
+\subsection{Derivation of the Second-Order Finite Difference Approximation for the Second Derivative}
+
+The first part of the laboratory focused on deriving the second-order centered finite difference approximation for the second derivative,
+\begin{align}
+f''(x) &= \frac{f(x+h)-2f(x)+f(x-h)}{h^2} + O(h^2).
+\label{eq:secderiv}
+\end{align}
+To obtain this expression, the functions $f(x+h)$ and $f(x-h)$ were expanded using Taylor series around the point $x$, yielding
+\begin{align}
+f(x+h) &= f(x) + f'(x)h + \frac{1}{2}f''(x)h^2 + \frac{h^3}{3!}f'''(x) + \frac{h^4}{4!}f^{IV}(\xi^+)
+\label{eq:derivadel}
+\\
+f(x-h) &= f(x) - f'(x)h + \frac{1}{2}f''(x)h^2 - \frac{h^3}{3!}f'''(x) + \frac{h^4}{4!}f^{IV}(\xi^-).
+\label{eq:derivret}
+\end{align}
+Adding these two expressions eliminates the odd-order derivative terms, resulting in
+\begin{align*}
+f(x+h)+f(x-h)
+&=
+2f(x)
++
+f''(x)h^2
++
+\frac{h^4}{4!}
+\left[
+f^{IV}(\xi^+)
++
+f^{IV}(\xi^-)
+\right].
+\end{align*}
+Solving for $f''(x)$ gives
+\begin{align*}
+f''(x)
+&= \frac{f(x+h)+f(x-h)-2f(x)}{h^2} - \frac{h^2}{4!}
+\left[
+f^{IV}(\xi^+)
++
+f^{IV}(\xi^-)
+\right].
+\end{align*}
+Since $x < \xi^+ < x+h$ and $x-h < \xi^- < x$, the second term represents the truncation error associated with the approximation. Defining
+\begin{align*}
+E(h)
+=
+-\frac{h^2}{4!}
+\left[
+f^{IV}(\xi^+)
++
+f^{IV}(\xi^-)
+\right],
+\end{align*}
+it follows that the error is proportional to $h^2$, which leads to the well-known result
+\begin{align*}
+f''(x)
+=
+\frac{f(x+h)-2f(x)+f(x-h)}{h^2}
++
+O(h^2).
+\end{align*}
+Therefore, the centered finite difference approximation provides a second-order accurate numerical estimate of the second derivative.
+
+\subsection{Implementation of the Numerical Second Derivative in Python}
+
+After deriving the finite-difference approximation, the next step was to implement Equation~\ref{eq:secderiv} in Python. A function, \texttt{deriv2(f, x, h)}, was created to compute the numerical approximation of the second derivative using the centered finite-difference scheme.
+
+The implementation is shown in Code~\ref{cod:deriv2}. The numerical approximation was evaluated for the function $f(x)=\sqrt{x}$ and compared against its analytical second derivative,
+\begin{align*}
+f''(x) = -\frac{1}{4x\sqrt{x}}.
+\end{align*}
+The absolute error between the numerical and analytical solutions was then computed for different values of the step size $h$. To investigate the effect of discretization on numerical accuracy, a logarithmically spaced range of values for $h$ was generated and evaluated.
+
+\begin{listing}
+\begin{pythoncode}
+import numpy as np
+
+def deriv2(f, x, h):
+    return (f(x + h) - 2 * f(x) + f(x - h)) / h**2
+
+x = np.array([0.1, 1.0, np.pi/3])
+h = np.geomspace(1, 1e-20, 100)
+eps = 2**-52
+
+# Evaluation for a chosen point (e.g., x = 1.0)
+x_val = 1.0
+num_res = deriv2(np.sqrt, x_val, h)
+deriv2_an = -1 / (4 * x_val * np.sqrt(x_val))
+
+error_num = np.abs(deriv2_an - num_res)
+i = np.argmin(error_num)
+optimal_h = h[i]
+\end{pythoncode}
+\caption{Implementation of the numerical second derivative for $f(x)=\sqrt{x}$.}
+\label{cod:deriv2}
+\end{listing}
+
+A second script was used to visualize the numerical error as a function of the step size and to identify the value of $h$ that minimizes the approximation error.
+
+\begin{listing}
+\begin{pythoncode}
+import numpy as np
+import matplotlib.pyplot as plt
+
+def deriv2(f, x, h):
+    return (f(x + h) - 2 * f(x) + f(x - h)) / h**2
+
+def deriv2_an(x):
+    return -1 / (4 * x * np.sqrt(x))
+
+x = np.array([0.1, 1, np.pi/3])
+h = np.geomspace(0.1, 1e-20, 100)
+
+for i in x:
+    error = np.abs(deriv2_an(i) - deriv2(np.sqrt, i, h))
+    plt.loglog(h, error, label=f'x = {i:.3f}', zorder=1)
+    
+    j = np.argmin(error)
+    plt.scatter(h[j], error[j], marker="o", color="black", zorder=2)
+    print(f'Optimal h for x = {i:.3f}:', h[j])
+
+plt.xlabel("Desplazamiento h")
+plt.ylabel("Error")
+plt.legend(loc='best', title='Valores fijos de x')
+\end{pythoncode}
+\caption{Error analysis for the numerical approximation of the second derivative.}
+\label{cod:deriv2_error}
+\end{listing}
+
+The results show that the numerical error depends strongly on the choice of the step size. For large values of $h$, truncation errors dominate the approximation, while for extremely small values of $h$, floating-point roundoff errors become significant. Consequently, an optimal value of $h$ exists that minimizes the total numerical error.
+
+Figure~\ref{fig:h2} illustrates the relationship between the approximation error and the step size. The minimum point of each curve corresponds to the value of $h$ that provides the best balance between truncation and roundoff errors.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.5\textwidth]{deriv2.png}
+\caption{Relative error between the analytical and numerical second derivatives as a function of the step size $h$.}
+\label{fig:h2}
+\end{figure}
+
+This exercise provided practical experience in implementing finite-difference methods and highlighted an important aspect of numerical analysis: increasing numerical precision is not simply a matter of choosing smaller step sizes. Instead, numerical accuracy depends on balancing competing sources of error, an idea that appears repeatedly in scientific computing and computational physics.
+
+
+
+
+\end{document}

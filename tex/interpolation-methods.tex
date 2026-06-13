@@ -1,0 +1,128 @@
+\documentclass[../portafolio.tex]{subfiles}
+
+% Solo agregue paquetes en el preámbulo de ../portafolio.tex
+
+\begin{document}
+
+\section{Interpolation Methods}
+
+%\hfill \textbf{Fecha de la actividad:} 28 de octubre de 2022
+
+\medskip
+
+%---------------------------------------------------------------------------------
+% Activity Overview
+%---------------------------------------------------------------------------------
+
+This activity focused on the interpolation of historical sunspot data provided by the instructor. The objective was to reconstruct the behavior of solar activity over time and compare different interpolation techniques commonly used in scientific computing.
+
+Three interpolation methods were investigated:
+\begin{itemize}
+    \item Lagrange polynomial interpolation.
+    \item Cubic spline interpolation.
+    \item Polynomial interpolation using Vandermonde matrices.
+\end{itemize}
+The resulting interpolations were then compared in terms of accuracy, smoothness, and implementation complexity.
+
+%---------------------------------------------------------------------------------
+% Evidence
+%---------------------------------------------------------------------------------
+
+\subsection{Interpolation Methods}
+
+The first approach employed Lagrange polynomial interpolation. A custom implementation of the Lagrange basis polynomials was developed, as shown in Code~\ref{cod:lag}. To improve numerical stability and avoid oscillatory behavior associated with high-degree polynomials, the dataset was divided into smaller intervals containing six data points each. The interpolation was then performed independently within each interval.
+
+\begin{listing}
+\begin{pythoncode}
+def f(x, xi, yi):
+    pol = 0.0
+    N = len(xi)
+    for i in range(N):
+        Li = yi[i]
+        for j in range(N):
+            if j != i:
+                Li = Li * (x - xi[j]) / (xi[i] - xi[j])
+        pol = pol + Li
+    return pol
+
+for i in range(0, len(xi), 5):
+    xi2 = xi[i:i+6]
+    yi2 = yi[i:i+6]
+
+    x = np.linspace(xi2.min(), xi2.max(), 50)
+    y = f(x, xi2, yi2)
+
+    plt.scatter(xi2, yi2)
+    plt.plot(x, y)
+\end{pythoncode}
+\caption{Lagrange polynomial interpolation.}
+\label{cod:lag}
+\end{listing}
+
+The second method utilized cubic spline interpolation. In this case, the \texttt{cspline} function from the \texttt{SplineInterpolation} library was applied directly to the dataset. Cubic splines construct piecewise cubic polynomials while maintaining continuity of the function and its derivatives across interval boundaries.
+
+\begin{listing}
+\begin{pythoncode}
+g = cspline(xi, yi)
+\end{pythoncode}
+\caption{Cubic spline interpolation.}
+\label{cod:cspline}
+\end{listing}
+
+Finally, polynomial interpolation based on Vandermonde matrices was implemented. Similar to the Lagrange approach, the dataset was divided into smaller subsets to reduce numerical instabilities associated with high-degree polynomial interpolation. For each interval, the interpolation coefficients were obtained by solving the corresponding Vandermonde system.
+
+\begin{listing}
+\begin{pythoncode}
+for i in range(0, len(xi), 3):
+    xi2 = xi[i:i+4]
+    yi2 = yi[i:i+4]
+
+    x = np.linspace(xi2.min(), xi2.max(), 50)
+    f2 = Vandermonde(xi2, yi2)
+    y = f2(x)
+
+    plt.scatter(xi2, yi2)
+    plt.plot(x, y)
+\end{pythoncode}
+\caption{Interpolation using Vandermonde matrices.}
+\label{cod:noc}
+\end{listing}
+
+\subsection{Results and Visualization}
+
+Figures~\ref{fig:lg}, \ref{fig:cs}, and \ref{fig:vn} show the interpolated sunspot data obtained using Lagrange polynomials, cubic splines, and Vandermonde matrices, respectively.
+
+Visual inspection of the results indicates that all three methods successfully reproduce the observed behavior of the dataset. Although minor differences appear between the approaches, the overall trends remain consistent across the interpolated curves.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=\textwidth]{interpolacion-lagrange.png}
+\caption{Interpolation of sunspot data using Lagrange polynomials.}
+\label{fig:lg}
+\end{figure}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=\textwidth]{interpolacion-cspeline.png}
+\caption{Interpolation of sunspot data using cubic splines.}
+\label{fig:cs}
+\end{figure}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=\textwidth]{interpolacion-vander.png}
+\caption{Interpolation of sunspot data using Vandermonde matrices.}
+\label{fig:vn}
+\end{figure}
+
+\subsection{Discussion}
+
+This activity provided an opportunity to compare multiple interpolation techniques applied to the same scientific dataset. While all three methods produced similar results, important differences emerged in terms of implementation and computational efficiency.
+
+The cubic spline approach proved particularly convenient because it could be applied directly to the complete dataset without the need to partition the data into smaller intervals. In contrast, both the Lagrange and Vandermonde methods required segmentation of the dataset to maintain numerical stability and avoid artifacts associated with high-degree polynomial interpolation.
+
+Beyond the specific application to sunspot observations, this exercise illustrates how interpolation techniques can be used to reconstruct continuous behavior from discrete measurements. Such methods are widely employed in computational physics, data analysis, signal processing, and scientific modeling.
+
+
+
+\end{document}

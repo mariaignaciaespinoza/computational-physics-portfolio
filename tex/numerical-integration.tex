@@ -1,0 +1,112 @@
+\documentclass[../portafolio.tex]{subfiles}
+
+% Solo agregue paquetes en el preámbulo de ../portafolio.tex
+
+\begin{document}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Numerical Integration.}   % ejemplo: Derivadas numéricas , introducción a git , 
+
+%\hfill \textbf{Fecha de la actividad:} 02 de septiembre de 2022
+
+\medskip
+%---------------------------------------------------------------------------------
+% Activity Overview
+This activity focused on the numerical evaluation of definite integrals using the Midpoint Rule. The objectives were to derive the method from Taylor series expansions, compare its numerical approximation with the analytical solution, and implement the algorithm in Python.
+
+%---------------------------------------------------------------------------------
+% Evidence
+%---------------------------------------------------------------------------------
+
+\subsection{Derivation of the Midpoint Rule}
+
+The first part of the activity consisted of deriving the midpoint integration formula,
+\begin{align*}
+\int_a^b f(x) \, dx = hf\left(\frac{a+b}{2}\right) + O(h^3),
+\end{align*}
+where $h=b-a$ and the function is evaluated at the midpoint of the integration interval.
+
+To derive this expression, the function was expanded around the midpoint
+\begin{align*}
+M=\frac{a+b}{2}
+\end{align*}
+using a Taylor series. Substituting the expansion into the integral and integrating term by term yields an approximation in which the leading contribution is proportional to the function evaluated at the midpoint.
+
+The remaining higher-order terms constitute the truncation error of the method, which scales as $O(h^3)$. Therefore, the midpoint rule provides a second-order accurate approximation of the definite integral.
+
+\subsection{Analytical and Numerical Evaluation}
+
+The midpoint rule was applied to the integral
+\begin{align}
+I = \int_{0}^{3} (x-1)e^x \, dx,
+\label{ecpri}
+\end{align}
+resulting in the approximation
+\begin{align}
+I \approx \frac{3}{2}e^{3/2}.
+\label{ecb}
+\end{align}
+To assess the accuracy of the numerical method, the exact analytical solution was also computed,
+\begin{align}
+I = e^3 + 2.
+\label{ecb2}
+\end{align}
+Comparing Equations~\ref{ecb} and~\ref{ecb2} reveals the approximation error associated with evaluating the integral using a single midpoint. This difference illustrates the limitations of low-order numerical quadrature when applied over large intervals.
+
+\subsection{Python Implementation}
+
+The midpoint rule was implemented in Python through the function \texttt{midpoint\_simple(f,a,b)}, shown in Code~\ref{cod1}.
+
+\begin{listing}
+\begin{pythoncode}
+import numpy as np
+
+def midpoint_simple(f, a, b):
+    return (b - a) * f((a + b) / 2)
+
+def g(x):
+    return (x - 1) * np.exp(x)
+
+# Numerical evaluation
+result = midpoint_simple(g, 0, 3)
+\end{pythoncode}
+\caption{Implementation of the Midpoint Rule.}
+\label{cod1}
+\end{listing}
+
+The numerical result obtained from the implementation matched the value predicted by Equation~\ref{ecb}, confirming the correctness of the algorithm.
+
+\subsection{Composite Midpoint Rule}
+
+To improve the approximation, the integration interval was subdivided into multiple smaller intervals,
+\begin{align*}
+\int_a^b f(x)\,dx = \int_a^{x_1}f(x)\,dx + \int_{x_1}^{x_2}f(x)\,dx + \cdots + \int_{x_N}^{b}f(x)\,dx.
+\end{align*}
+The midpoint rule was then applied independently to each subinterval. This procedure is known as the \textit{Composite Midpoint Rule}. The implementation is shown in Code~\ref{codci}.
+
+\begin{listing}
+\begin{pythoncode}
+lim = np.linspace(0, 3, 100)
+int_0 = 0.0
+
+for i in range(len(lim) - 1):
+    int_0 += midpoint_simple(g, lim[i], lim[i+1])
+\end{pythoncode}
+\caption{Composite Midpoint Rule implementation.}
+\label{codci}
+\end{listing}
+
+Using multiple subintervals produced a more accurate numerical approximation while maintaining the simplicity of the original method. This demonstrates a common strategy in numerical analysis: improving accuracy by refining the discretization of the problem.
+
+\subsection{Discussion}
+
+This activity provided practical experience with numerical integration and highlighted the relationship between analytical and computational approaches to solving mathematical problems.
+
+The implementation of both the standard and composite midpoint rules demonstrated how numerical quadrature methods can approximate definite integrals efficiently while offering controllable accuracy through interval subdivision. These concepts form the foundation of more advanced numerical integration techniques used in scientific computing, computational physics, and data analysis.
+
+
+
+
+
+\end{document}

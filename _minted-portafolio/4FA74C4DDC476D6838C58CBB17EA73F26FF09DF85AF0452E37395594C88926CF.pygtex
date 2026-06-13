@@ -1,0 +1,12 @@
+\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8\relax}]
+\PYG{k}{for} \PYG{n}{i} \PYG{o+ow}{in} \PYG{n+nb}{range}\PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n+nb}{len}\PYG{p}{(}\PYG{n}{xi}\PYG{p}{),} \PYG{l+m+mi}{3}\PYG{p}{):}
+    \PYG{n}{xi2} \PYG{o}{=} \PYG{n}{xi}\PYG{p}{[}\PYG{n}{i}\PYG{p}{:}\PYG{n}{i}\PYG{o}{+}\PYG{l+m+mi}{4}\PYG{p}{]}
+    \PYG{n}{yi2} \PYG{o}{=} \PYG{n}{yi}\PYG{p}{[}\PYG{n}{i}\PYG{p}{:}\PYG{n}{i}\PYG{o}{+}\PYG{l+m+mi}{4}\PYG{p}{]}
+
+    \PYG{n}{x} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{linspace}\PYG{p}{(}\PYG{n}{xi2}\PYG{o}{.}\PYG{n}{min}\PYG{p}{(),} \PYG{n}{xi2}\PYG{o}{.}\PYG{n}{max}\PYG{p}{(),} \PYG{l+m+mi}{50}\PYG{p}{)}
+    \PYG{n}{f2} \PYG{o}{=} \PYG{n}{Vandermonde}\PYG{p}{(}\PYG{n}{xi2}\PYG{p}{,} \PYG{n}{yi2}\PYG{p}{)}
+    \PYG{n}{y} \PYG{o}{=} \PYG{n}{f2}\PYG{p}{(}\PYG{n}{x}\PYG{p}{)}
+
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{scatter}\PYG{p}{(}\PYG{n}{xi2}\PYG{p}{,} \PYG{n}{yi2}\PYG{p}{)}
+    \PYG{n}{plt}\PYG{o}{.}\PYG{n}{plot}\PYG{p}{(}\PYG{n}{x}\PYG{p}{,} \PYG{n}{y}\PYG{p}{)}
+\end{Verbatim}

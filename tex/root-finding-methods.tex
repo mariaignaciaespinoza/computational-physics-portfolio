@@ -1,0 +1,130 @@
+\documentclass[../portafolio.tex]{subfiles}
+
+% Solo agregue paquetes en el preámbulo de ../portafolio.tex
+
+\begin{document}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Root Finding Methods}   % ejemplo: Derivadas numéricas , introducción a git , 
+
+%\hfill \textbf{Fecha de la actividad:} 9 de septiembre de 2022
+
+\medskip
+
+%---------------------------------------------------------------------------------
+%---------------------------------------------------------------------------------
+% Activity Overview
+This activity focused on the numerical determination of equilibrium points through root-finding techniques. The main objectives were to compute numerical derivatives, analyze the behavior of a parameter-dependent function, and locate its critical points using the bisection method.
+
+These techniques are fundamental in computational physics and scientific computing, where analytical solutions are often unavailable and numerical methods must be used to identify equilibria and characterize system behavior.
+
+%---------------------------------------------------------------------------------
+% Evidence
+%---------------------------------------------------------------------------------
+
+\subsection{Numerical Differentiation and Root Finding}
+
+The first task consisted of analyzing the function
+\begin{align}
+u(\theta)=\cos(\theta)+\beta\sin^2(\theta),
+\label{eq:u}
+\end{align}
+for values of $\theta$ in the interval
+\begin{align*}
+0 \leq \theta \leq \frac{\pi}{2},
+\end{align*}
+and for ten different values of the parameter $\beta$ between 0 and 1.
+
+The derivative of the function was approximated numerically using a centered finite-difference scheme,
+\begin{align*}
+u'(\theta) \approx \frac{u(\theta+h)-u(\theta-h)}{2h},
+\end{align*}
+which provides second-order accuracy with respect to the step size $h$.
+
+After computing the derivative, the bisection method was used to determine the values of $\theta$ satisfying
+\begin{align*}
+u'(\theta)=0.
+\end{align*}
+These solutions correspond to critical points of the function and may represent equilibrium configurations of the underlying physical system. The implementation is shown in Code~\ref{cod:ceros1}.
+
+\begin{listing}
+\begin{pythoncode}
+import numpy as np
+import matplotlib.pyplot as plt
+
+x = np.linspace(0, np.pi/2, 100)
+
+for b in np.linspace(0, 1, 10):
+    def u(theta):
+        return np.cos(theta) + b * (np.sin(theta))**2
+
+    def du(theta, h=1e-3):
+        return (u(theta + h) - u(theta - h)) / (2 * h)
+
+    plt.plot(x, du(x))
+
+# Root-finding using the bisection method for the last system state
+m = 0.1
+n = 1.25
+
+for i in range(10):
+    c = 0.5 * (m + n)
+    condicion = du(m) * du(c) 
+
+    if condicion <= 0: 
+        n = c 
+    else:
+        m = c
+
+plt.plot(c, du(c), 'o')
+\end{pythoncode}
+\caption{Numerical differentiation and root finding using the bisection method.}
+\label{cod:ceros1}
+\end{listing}
+
+\subsection{Results}
+
+Figure~\ref{fig:ceros1} presents the numerical derivative for different values of $\beta$ in the interval $[0,1]$.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=\textwidth]{graficoceros1.png}
+\caption{Numerical derivative of $u(\theta)$ for multiple values of $\beta$.}
+\label{fig:ceros1}
+\end{figure}
+
+The zeros of the derivative correspond to locations where the slope changes sign and therefore indicate potential equilibrium points. As the parameter $\beta$ varies, the number and position of these critical points change, revealing a dependence of the system's behavior on the control parameter.
+
+Figure~\ref{fig:ceros2} focuses on the regime $\beta > 1/2$, where additional equilibrium solutions emerge.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=\textwidth]{graficoceros3.png}
+\caption{Numerical derivative for values of $\beta$ greater than $1/2$.}
+\label{fig:ceros2}
+\end{figure}
+
+The corresponding equilibrium angles obtained through the bisection algorithm are shown in Figure~\ref{fig:ceros3}.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=\textwidth]{graficoceros2.png}
+\caption{Equilibrium angle $\theta$ as a function of the parameter $\beta$.}
+\label{fig:ceros3}
+\end{figure}
+
+\subsection{Discussion}
+
+This activity demonstrated how numerical differentiation and root-finding algorithms can be combined to identify equilibrium states in parameter-dependent systems.
+
+The bisection method proved to be a reliable technique for locating the roots of the derivative, while the graphical analysis provided insight into how the equilibrium configurations evolve as the parameter $\beta$ changes.
+
+Beyond this specific example, root-finding methods play a central role in scientific computing and are widely used in optimization, nonlinear dynamics, engineering simulations, and computational physics. The techniques implemented here form part of the core numerical toolkit required for the analysis of mathematical models and dynamical systems.
+
+
+
+
+
+\end{document}

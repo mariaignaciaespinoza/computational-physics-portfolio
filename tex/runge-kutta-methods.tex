@@ -1,0 +1,120 @@
+\documentclass[../portafolio.tex]{subfiles}
+
+% Solo agregue paquetes en el preámbulo de ../portafolio.tex
+
+\begin{document}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Runge Kutta Methods}   % ejemplo: Derivadas numéricas , introducción a git , 
+
+%\hfill \textbf{Fecha de la actividad:} 30 de septiembre de 2022
+
+\medskip
+
+%-------------------------------------------------------------%---------------------------------------------------------------------------------
+% Activity Overview
+
+This activity explored the numerical solution of a nonlinear dynamical system using the fourth-order Runge--Kutta (RK4) method. The motivation was inspired by the famous question often associated with chaos theory:
+\begin{quote}
+``Could the flap of a butterfly's wings in Brazil set off a tornado in Texas?''
+\end{quote}
+This idea, known as the \textit{Butterfly Effect}, reflects the sensitivity of certain nonlinear systems to small changes in their initial conditions.
+
+The objective of this activity was to solve the Lorenz system numerically, investigate the influence of different initial conditions on the resulting trajectories, and visualize the system's chaotic behavior in both two- and three-dimensional representations.
+
+%---------------------------------------------------------------------------------
+% Evidence
+%---------------------------------------------------------------------------------
+
+\subsection{Numerical Solution of the Lorenz System}
+
+The Lorenz equations are given by
+\begin{align}
+\dot{x} &= \sigma(y-x), \nonumber \\
+\dot{y} &= \rho x - y - xz, \nonumber \\
+\dot{z} &= xy - \beta z,
+\label{eq1}
+\end{align}
+where $\sigma$, $\rho$, and $\beta$ are model parameters.
+
+To solve this system numerically, a fourth-order Runge--Kutta integrator was implemented. The RK4 method improves accuracy by evaluating the derivatives at four intermediate points during each integration step. These evaluations are represented by the quantities $K_1$, $K_2$, $K_3$, and $K_4$. The implementation is shown in Code~\ref{cod:rungekutta}.
+
+\begin{listing}
+\begin{pythoncode}
+import numpy as np
+
+def f(u, t, o=10, p=28, b=8/3):
+    x, y, z = u
+    return np.array([o * (y - x), p * x - y - x * z, x * y - b * z])
+
+tmax = 30.0
+h = 0.01
+t = np.arange(0, tmax, h)
+
+u = np.empty([t.size, 3])
+u[0] = [0.0, 1.0, 1.05] # Initial conditions
+
+for n in range(t.size - 1):
+    K1 = f(u[n], t[n])
+    K2 = f(u[n] + 0.5 * h * K1, t[n] + 0.5 * h)
+    K3 = f(u[n] + 0.5 * h * K2, t[n] + 0.5 * h)
+    K4 = f(u[n] + h * K3, t[n] + h)
+    u[n+1] = u[n] + (h / 6) * (K1 + 2 * K2 + 2 * K3 + K4)
+\end{pythoncode}
+\caption{Fourth-order Runge--Kutta solution of the Lorenz system.}
+\label{cod:rungekutta}
+\end{listing}
+
+The simulation was performed over a finite time interval using a constant time step, allowing the trajectory of the system to be reconstructed numerically.
+
+\subsection{Analysis of Sensitivity to Initial Conditions}
+
+The first simulation used the initial conditions provided in the laboratory instructions. The resulting trajectory is shown in Figure~\ref{graph1}.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.5\textwidth]{RungeTukka1.png}
+\caption{Lorenz system trajectory obtained using the original initial conditions.}
+\label{graph1}
+\end{figure}
+
+A second simulation was then performed using slightly modified initial conditions,
+\begin{align*}
+x(0)=1.0,\quad y(0)=1.5,\quad z(0)=0.05.
+\end{align*}
+The resulting trajectory is shown in Figure~\ref{graph2}.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.5\textwidth]{RungeTukka2.png}
+\caption{Lorenz system trajectory obtained using perturbed initial conditions.}
+\label{graph2}
+\end{figure}
+
+Although the changes in the initial conditions were relatively small, the long-term behavior of the trajectories became significantly different. This sensitivity to initial conditions is one of the defining characteristics of chaotic systems and illustrates why long-term prediction becomes difficult in many nonlinear dynamical models.
+
+\subsection{Three-Dimensional Visualization}
+
+To better visualize the geometry of the system, the numerical solution was also represented in three-dimensional phase space. The resulting trajectory is shown in Figure~\ref{graph3}.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.5\textwidth]{RungeKutta3.png}
+\caption{Three-dimensional phase-space trajectory of the Lorenz system.}
+\label{graph3}
+\end{figure}
+
+The characteristic butterfly-shaped structure emerges naturally from the simulation and corresponds to the well-known Lorenz attractor. Despite the deterministic nature of the governing equations, nearby trajectories diverge rapidly, producing complex and apparently unpredictable behavior.
+
+\subsection{Discussion}
+
+This activity provided practical experience with the numerical integration of nonlinear differential equations and introduced several key concepts in dynamical systems theory and chaos.
+
+The fourth-order Runge--Kutta method proved to be an effective tool for accurately solving the Lorenz equations, while the comparison of nearby trajectories demonstrated the phenomenon of sensitive dependence on initial conditions. The resulting Lorenz attractor illustrates how deterministic systems can generate highly complex behavior without the presence of randomness.
+
+These ideas form the foundation of modern studies in nonlinear dynamics, complex systems, climate modeling, fluid dynamics, and many other areas of computational science.
+
+
+\end{document}
