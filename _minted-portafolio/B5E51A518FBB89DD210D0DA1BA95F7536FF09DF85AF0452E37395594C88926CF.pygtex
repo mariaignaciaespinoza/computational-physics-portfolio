@@ -1,4 +1,0 @@
-\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8\relax}]
-\PYG{n}{x} \PYG{o}{=} \PYG{n}{xi} \PYG{o}{\PYGZhy{}} \PYG{n}{xi}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}
-\PYG{n}{f} \PYG{o}{=} \PYG{n}{polyfit}\PYG{p}{(}\PYG{n}{x}\PYG{p}{,} \PYG{n}{yi}\PYG{p}{)}
-\end{Verbatim}
